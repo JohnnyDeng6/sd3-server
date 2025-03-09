@@ -20,7 +20,7 @@ pipe.to('cuda')
 negative_prompt = "Deformed, disfigured, poor details, bad anatomy, dark, colorful"
 
 # Can be set to 1~50 steps. LCM support fast inference even <= 4 steps. Recommend: 1~8 steps.
-num_inference_steps = 3
+num_inference_steps = 1
 
 # --------------------------------
 
@@ -35,9 +35,9 @@ def generate_image():
         image=app.james,
         prompt=james_prompt,
         negative_prompt=negative_prompt,
-        height=128,
-        width=128,
-        strength=0.061,
+        height=256,
+        width=256,
+        strength=0.05,
         num_inference_steps=num_inference_steps
     ).images[0]
     app.james = image
