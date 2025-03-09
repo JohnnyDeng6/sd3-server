@@ -3,7 +3,7 @@ from diffusers import AutoPipelineForImage2Image
 from diffusers.utils import load_image
 
 # For flask
-from flask import Flask, send_file
+from flask import Flask, request, send_file
 
 # Etc.
 import io
@@ -19,9 +19,6 @@ pipe.to('cuda')
 
 negative_prompt = "poor details, noise"
 
-# Can be set to 1~50 steps. LCM support fast inference even <= 4 steps. Recommend: 1~8 steps.
-num_inference_steps = 1
-
 # --------------------------------
 
 app = Flask(__name__)
@@ -31,17 +28,26 @@ james_prompt = "man on gray background, 8k"
 
 @app.route("/james.png", methods=["GET"])
 def generate_image():
+    reset_img = request.args.get('reset', default=False, type=bool)
+    strength = request.args.get('s', default=0.05, type=float)
+    guidance_scale = request.args.get('g', default=10.0, type=float)
+    num_inference_steps = request.args.get('n', default=1, type=int)
+
+    if reset_img:
+        app.james = load_image('james.png')
+
     image = pipe(
         image=app.james,
         prompt=james_prompt,
         negative_prompt=negative_prompt,
         height=128,
         width=128,
-        strength=0.05,
-        guidance_scale=10.0,
+        strength=strength,
+        guidance_scale=guidance_scale,
         num_inference_steps=num_inference_steps
     ).images[0]
     app.james = image
+
     img_io = io.BytesIO()
     image.save(img_io, format="PNG")
     img_io.seek(0)
