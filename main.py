@@ -17,7 +17,7 @@ pipe = AutoPipelineForImage2Image.from_pretrained(
 )
 pipe.to('cuda')
 
-negative_prompt = "Deformed, disfigured, poor details, bad anatomy, dark, colorful"
+negative_prompt = "poor details, noise"
 
 # Can be set to 1~50 steps. LCM support fast inference even <= 4 steps. Recommend: 1~8 steps.
 num_inference_steps = 1
@@ -27,7 +27,7 @@ num_inference_steps = 1
 app = Flask(__name__)
 
 app.james = load_image('james.png')
-james_prompt = "Realistic man on gray background, monochrome"
+james_prompt = "man on gray background, 8k"
 
 @app.route("/james.png", methods=["GET"])
 def generate_image():
@@ -35,9 +35,10 @@ def generate_image():
         image=app.james,
         prompt=james_prompt,
         negative_prompt=negative_prompt,
-        height=256,
-        width=256,
+        height=128,
+        width=128,
         strength=0.05,
+        guidance_scale=10.0,
         num_inference_steps=num_inference_steps
     ).images[0]
     app.james = image
