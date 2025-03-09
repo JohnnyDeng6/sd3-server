@@ -11,11 +11,11 @@ import io
 # --------------------------------
 
 # Prepare the SD pipeline
-# pipe = AutoPipelineForImage2Image.from_pretrained(
-#     "SimianLuo/LCM_Dreamshaper_v7",
-#     safety_checker=None
-# )
-# pipe.to('cuda')
+pipe = AutoPipelineForImage2Image.from_pretrained(
+    "SimianLuo/LCM_Dreamshaper_v7",
+    safety_checker=None
+)
+pipe.to('cuda')
 
 # Code for controlnet
 controlnet = ControlNetModel.from_pretrained("lllyasviel/control_v11f1p_sd15_depth", torch_dtype=torch.float16, variant="fp16", use_safetensors=True)
@@ -46,7 +46,7 @@ def generate_image():
     if reset_img:
         app.james_source = load_image('james.png')
 
-    image = pipeline(
+    image = pipe(
         image=app.james_source,
         prompt=prompt,
         negative_prompt=negative_prompt,
