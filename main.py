@@ -35,10 +35,10 @@ def generate_image():
     prompt = request.args.get('prompt', default=james_prompt, type=str)
 
     if reset_img:
-        app.james = load_image('james.png')
+        app.james_source = load_image('james.png')
 
     image = pipe(
-        image=app.james,
+        image=app.james_source,
         prompt=prompt,
         negative_prompt=negative_prompt,
         height=128,
@@ -47,7 +47,7 @@ def generate_image():
         guidance_scale=guidance_scale,
         num_inference_steps=num_inference_steps
     ).images[0]
-    app.james = image
+    app.james_source = image
 
     img_io = io.BytesIO()
     image.save(img_io, format="PNG")
