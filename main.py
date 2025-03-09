@@ -23,15 +23,15 @@ negative_prompt = "poor details, noise"
 
 app = Flask(__name__)
 
-app.james = load_image('james.png')
+app.james_source = load_image('james.png')
 james_prompt = "man on gray background, 8k"
 
 @app.route("/james.png", methods=["GET"])
 def generate_image():
     reset_img = request.args.get('reset', default=False, type=bool)
-    strength = request.args.get('s', default=0.05, type=float)
+    strength = request.args.get('s', default=0.1, type=float)
     guidance_scale = request.args.get('g', default=10.0, type=float)
-    num_inference_steps = request.args.get('n', default=1, type=int)
+    num_inference_steps = request.args.get('n', default=5, type=int)
 
     if reset_img:
         app.james = load_image('james.png')
