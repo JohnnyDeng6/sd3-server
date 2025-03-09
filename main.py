@@ -29,16 +29,17 @@ james_prompt = "man on gray background, 8k"
 @app.route("/james.png", methods=["GET"])
 def generate_image():
     reset_img = request.args.get('reset', default=False, type=bool)
-    strength = request.args.get('s', default=0.1, type=float)
-    guidance_scale = request.args.get('g', default=10.0, type=float)
-    num_inference_steps = request.args.get('n', default=5, type=int)
+    strength = request.args.get('str', default=0.1, type=float)
+    guidance_scale = request.args.get('gui', default=10.0, type=float)
+    num_inference_steps = request.args.get('num', default=5, type=int)
+    prompt = request.args.get('prompt', default=james_prompt, type=str)
 
     if reset_img:
         app.james = load_image('james.png')
 
     image = pipe(
         image=app.james,
-        prompt=james_prompt,
+        prompt=prompt,
         negative_prompt=negative_prompt,
         height=128,
         width=128,
