@@ -63,9 +63,6 @@ def generate_image():
     img_io.seek(0)
     return send_file(img_io, mimetype="image/png")
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8888)
-
 # ----------------
 
 app.control_image = load_image('james_scare_depth.png')  # Provide a control image file
@@ -87,3 +84,7 @@ def generate_contolled_image():
     new_image.save(img_io, format="PNG")
     img_io.seek(0)
     return send_file(img_io, mimetype="image/png")
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8888)
