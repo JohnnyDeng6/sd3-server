@@ -76,8 +76,7 @@ def generate_contolled_image():
 #     height = data.get("height", 512)
     prompt = "add monochrome"
 
-    new_image = pipeline(prompt, image=app.control_dst, control_image=app.control_image).images[0]
-    #new_image = pipeline(prompt, negative_prompt=negative_prompt, image=image_control_net, strength=0.45, guidance_scale=10.5).images[0]
+    new_image = pipeline(prompt, image=app.control_dst, control_image=app.control_image, strength=0.45, guidance_scale=10.5).images[0]
     app.control_dst = new_image
 
     img_io = io.BytesIO()
