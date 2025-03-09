@@ -69,14 +69,24 @@ app.control_image = load_image('james_scare_depth.png')  # Provide a control ima
 app.control_dst = load_image('james.png')
 @app.route("/generate", methods=["GET"])
 def generate_contolled_image():
-#     data = request.json
-#     prompt = data.get("prompt", "Realistic man on gray background, monochrome")
-#     strength = data.get("strength", 0.061)
-#     width = data.get("width", 512)
-#     height = data.get("height", 512)
-    prompt = "add monochrome"
+    reset_img = request.args.get('reset', default=False, type=bool)
+    strength = request.args.get('str', default=0.1, type=float)
+    guidance_scale = request.args.get('gui', default=10.0, type=float)
+    num_inference_steps = request.args.get('num', default=5, type=int)
+    prompt = request.args.get('prompt', default=james_prompt, type=str)
+    prompt = "man with arm raised up"
 
-    new_image = pipeline(prompt, image=app.control_dst, control_image=app.control_image, strength=0.45, guidance_scale=10.5).images[0]
+    new_image = pipeline(
+            prompt=prompt,
+            image=app.control_dst,
+            height=128,
+            width=128,
+            control_image=app.control_image,
+            controlnet_conditioning_scale=3.0,
+        strength=strength,
+        guidance_scale=guidance_scale,
+        num_inference_steps=num_inference_steps
+    ).images[0]
     app.control_dst = new_image
 
     img_io = io.BytesIO()
