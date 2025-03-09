@@ -1,10 +1,9 @@
 # For stable diffusion
 from diffusers import AutoPipelineForImage2Image
 from diffusers.utils import load_image
-from PIL import Image
 
 # For flask
-from flask import Flask, request, send_file
+from flask import Flask, send_file
 
 # Etc.
 import io
@@ -14,15 +13,14 @@ import io
 # Prepare the SD pipeline
 pipe = AutoPipelineForImage2Image.from_pretrained(
     "SimianLuo/LCM_Dreamshaper_v7",
-    safety_checker=None,
-    disable_progress_bar=True
+    safety_checker=None
 )
 pipe.to('cuda')
 
 negative_prompt = "Deformed, disfigured, poor details, bad anatomy, dark, colorful"
 
 # Can be set to 1~50 steps. LCM support fast inference even <= 4 steps. Recommend: 1~8 steps.
-num_inference_steps = 2
+num_inference_steps = 3
 
 # --------------------------------
 
@@ -39,7 +37,7 @@ def generate_image():
         negative_prompt=negative_prompt,
         height=128,
         width=128,
-        strength=0.1,
+        strength=0.061,
         num_inference_steps=num_inference_steps
     ).images[0]
     app.james = image
