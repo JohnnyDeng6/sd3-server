@@ -32,8 +32,8 @@ negative_prompt = "poor details, noise"
 
 app = Flask(__name__)
 
-app.james_source = load_image('james_rah.png')
-james_prompt = "man on gray background, 8k"
+app.james_source = load_image('james.png')
+james_prompt ="creepy man"
 
 @app.route("/james.png", methods=["GET"])
 def generate_image():
@@ -42,21 +42,34 @@ def generate_image():
     guidance_scale = request.args.get('gui', default=10.0, type=float)
     num_inference_steps = request.args.get('num', default=5, type=int)
     prompt = request.args.get('prompt', default=james_prompt, type=str)
+    count = request.args.get('count', default=1, type=int)
 
     if reset_img:
-        app.james_source = load_image('james_rah.png')
+        app.james_source = load_image('james.png')
 
-    image = pipe(
-        image=app.james_source,
-        prompt=prompt,
-        negative_prompt=negative_prompt,
-        height=512,
-        width=512,
-        strength=strength,
-        guidance_scale=guidance_scale,
-        num_inference_steps=num_inference_steps
-    ).images[0]
-    app.james_source = image
+    images = []
+    for i in range(count):
+        image = pipe(
+            image=app.james_source,
+            prompt=prompt,
+            negative_prompt=negative_prompt,
+            height=128,
+            width=128,
+            strength=strength,
+            guidance_scale=guidance_scale,
+            num_inference_steps=num_inference_steps
+        ).images[0]
+        images.append(image)
+        app.james_source = image
+
+    if (count > 1):
+        rows = min(count, 3)
+        image_grid = make_image_grid(images, rows=rows, cols=3)
+        img_io = io.BytesIO()
+        image_grid.save(img_io, format="PNG")
+        img_io.seek(0)
+        return send_file(img_io, mimetype="image/png")
+        
 
     img_io = io.BytesIO()
     image.save(img_io, format="PNG")
@@ -73,7 +86,7 @@ def generate_contolled_image():
     strength = request.args.get('str', default=0.1, type=float)
     guidance_scale = request.args.get('gui', default=10.0, type=float)
     num_inference_steps = request.args.get('num', default=5, type=int)
-    controlnet_conditioning_scale= - request.args.get('num', default=2, type=int)
+    controlnet_conditioning_scale= request.args.get('num', default=2.0, type=float)
     prompt = request.args.get('prompt', default=james_prompt, type=str)
     prompt = "man with arm raised up"
 
